@@ -162,14 +162,25 @@
 
 <script>
     const socket = io();
-    
-    // 1. Kiểm tra xem trình duyệt đã lưu tên cũ chưa
+    // --- ĐOẠN 1: KIỂM TRA MẬT KHẨU PHÒNG CHAT ---
+    const CHAT_ROOM_PASSWORD = "123"; // Bạn muốn đặt mật khẩu là gì thì sửa ở đây
+    let isPasswordCorrect = false;
+
+    while (!isPasswordCorrect) {
+        let enteredPassword = prompt("Vui lòng nhập mật khẩu để vào phòng chat:");
+        
+        if (enteredPassword === CHAT_ROOM_PASSWORD) {
+            isPasswordCorrect = true; 
+        } else {
+            alert("Sai mật khẩu rồi! Vui lòng thử lại.");
+        }
+    }
+
+    // --- ĐOẠN 2: XỬ LÝ GHI NHỚ TÊN NGƯỜI DÙNG ---
     let myName = localStorage.getItem('chat_username');
 
     if (!myName) {
-        // Nếu chưa có mới bắt nhập tên bằng prompt
         myName = prompt("Nhập tên của bạn để tham gia phòng chat:") || "User_" + Math.floor(Math.random() * 1000);
-        // Lưu lại vào trình duyệt cho lần sau
         localStorage.setItem('chat_username', myName);
     }
     
