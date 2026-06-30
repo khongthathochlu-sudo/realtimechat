@@ -163,8 +163,16 @@
 <script>
     const socket = io();
     
-    // Bật bảng hỏi tên khi vừa truy cập website
-    const myName = prompt("Nhập tên của bạn để tham gia phòng chat:") || "User_" + Math.floor(Math.random() * 1000);
+    // 1. Kiểm tra xem trình duyệt đã lưu tên cũ chưa
+    let myName = localStorage.getItem('chat_username');
+
+    if (!myName) {
+        // Nếu chưa có mới bắt nhập tên bằng prompt
+        myName = prompt("Nhập tên của bạn để tham gia phòng chat:") || "User_" + Math.floor(Math.random() * 1000);
+        // Lưu lại vào trình duyệt cho lần sau
+        localStorage.setItem('chat_username', myName);
+    }
+    
     document.getElementById('my-name').innerText = `Tài khoản: ${myName}`;
     
     // Gửi tên của mình lên để server lưu trữ
