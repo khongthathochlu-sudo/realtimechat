@@ -109,35 +109,52 @@
             align-self: flex-start;
             background-color: #22222f;
         }
-        .msg-me {
-            align-self: flex-end;
-            background-color: #6c5ce7;
-        }
-        .input-area {
-            padding: 20px;
-            display: flex;
-            gap: 10px;
-            border-top: 1px solid #2e2e3e;
-        }
-        input {
-            flex-grow: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background-color: #22222f;
-            color: #e8e8f0;
-            outline: none;
-        }
-        button {
-            padding: 0 20px;
-            border: none;
-            border-radius: 8px;
-            background-color: #6c5ce7;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover { background-color: #5a4bda; }
+        /* Tin nhắn của bản thân */
+.msg-me {
+    align-self: flex-end;
+    background-color: #ff758f; /* Màu hồng thắm */
+    color: white;
+}
+
+/* Tin nhắn của người khác */
+.msg-other {
+    align-self: flex-start;
+    background-color: #fff0f3;
+    color: #ff4d6d;
+    border: 1px solid #ffccd5;
+}
+
+/* Ô nhập liệu và nút bấm */
+.input-area {
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #ffccd5;
+}
+
+input {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #ffccd5;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #ff4d6d;
+    outline: none;
+}
+
+button {
+    padding: 0 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ff4d6d; /* Nút màu hồng đậm */
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover { 
+    background-color: #ff758f; 
+}
     </style>
 </head>
 <body>
