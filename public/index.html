@@ -93,8 +93,7 @@
         .msg-box {
             max-width: 70%;
             padding: 10px 14px;
-            border-radius: 12px
-            ;
+            border-radius: 12px;
             font-size: 14px;
             line-height: 1.4;
         }
@@ -162,22 +161,20 @@
 </div>
 
 <script>
-   const socket = io();
+    const socket = io();
+    
+    // Bật bảng hỏi tên khi vừa truy cập website
+    const myName = prompt("Nhập tên của bạn để tham gia phòng chat:") || "User_" + Math.floor(Math.random() * 1000);
+    document.getElementById('my-name').innerText = `Tài khoản: ${myName}`;
+    
+    // Gửi tên của mình lên để server lưu trữ
+    socket.emit('join', myName);
 
-// 1. Kiểm tra xem trình duyệt đã lưu tên cũ chưa
-let myName = localStorage.getItem('chat_username');
-
-if (!myName) {
-    // Nếu chưa có mới bắt nhập tên
-    myName = prompt("Nhập tên của bạn để tham gia phòng chat:") || "User_" + Math.floor(Math.random() * 1000);
-    // Lưu lại vào trình duyệt cho lần sau
-    localStorage.setItem('chat_username', myName);
-}
-
-document.getElementById('my-name').innerText = `Tài khoản: ${myName}`;
-
-// Gửi tên lên server
-socket.emit('join', myName);
+    const messagesDiv = document.getElementById('messages');
+    const msgInput = document.getElementById('msg-input');
+    const sendBtn = document.getElementById('send-btn');
+    const userListUl = document.getElementById('user-list');
+    const userCountSpan = document.getElementById('user-count');
 
     // Nhận danh sách cập nhật online từ server gửi về
     socket.on('updateUserList', (userList) => {
