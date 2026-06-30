@@ -1,54 +1,56 @@
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io');
-const path = require('path');
+const socketIo = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = socketIo(server);
 
-const PORT = process.env.PORT || 3000;
+app.use(express.static('public'));
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Đối tượng lưu trữ danh sách người dùng đang online (id: username)
+const users = {};
 
 io.on('connection', (socket) => {
-  console.log(`Người dùng kết nối: ${socket.id}`);
+    console.log('Có người kết nối:', socket.id);
 
-  socket.on('join', (username) => {
-    socket.username = username;
-    socket.broadcast.emit('user-joined', { username, id: socket.id });
-    console.log(`${username} đã tham gia phòng chat`);
-  });
-
-  socket.on('chat-message', (data) => {
-    io.emit('chat-message', {
-      id: socket.id,
-      username: socket.username || 'Khách',
-      message: data.message,
-      timestamp: Date.now(),
+    // Khi người dùng gửi tên của họ lên lúc vừa vào web
+    socket.on('join', (username) => {
+        users[socket.id] = username || 'Người dùng ẩn danh';
+        // Gửi danh sách cập nhật mới nhất cho TẤT CẢ mọi người
+        io.emit('updateUserList', Object.values(users));
+        
+        // Thông báo hệ thống có người vào phòng
+        socket.broadcast.emit('message', {
+            user: 'Hệ thống',
+            text: `${users[socket.id]} đã tham gia phòng chat.`
+        });
     });
-  });
 
-  socket.on('typing', () => {
-    socket.broadcast.emit('typing', {
-      username: socket.username || 'Khách',
+    // Khi có tin nhắn mới
+    socket.on('chatMessage', (msg) => {
+        io.emit('message', {
+            user: users[socket.id] || 'Ẩn danh',
+            text: msg
+        });
     });
-  });
 
-  socket.on('stop-typing', () => {
-    socket.broadcast.emit('stop-typing');
-  });
-
-  socket.on('disconnect', () => {
-    if (socket.username) {
-      io.emit('user-left', { username: socket.username, id: socket.id });
-      console.log(`${socket.username} đã rời phòng chat`);
-    } else {
-      console.log(`Người dùng ngắt kết nối: ${socket.id}`);
-    }
-  });
+    // Khi có người thoát (đóng tab)
+    socket.on('disconnect', () => {
+        if (users[socket.id]) {
+            const leftUser = users[socket.id];
+            delete users[socket.id];
+            // Cập nhật lại danh sách cho những người còn lại
+            io.emit('updateUserList', Object.values(users));
+            io.emit('message', {
+                user: 'Hệ thống',
+                text: `${leftUser} đã rời phòng chat.`
+            });
+        }
+    });
 });
 
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server đang chạy tại http://localhost:${PORT}`);
+    console.log(`Server đang chạy tại port ${PORT}`);
 });
